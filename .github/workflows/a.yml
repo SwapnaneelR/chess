@@ -7,17 +7,22 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
-
       - name: Set up Node.js
         uses: actions/setup-node@v3
         with:
-          node-version: '14'
+          node-version: '18'
 
-      - name: Install dependencies
-        run: npm install
+      - name: Install backend dependencies
+        run: npm --prefix backend install
 
-      - name: Lint project
-        run: npm run lint
+      - name: Lint backend
+        run: npm --prefix backend run lint
 
-      - name: Build project
-        run: npm run build
+      - name: Install frontend dependencies
+        run: npm --prefix frontend install
+
+      - name: Lint frontend
+        run: npm --prefix frontend run lint
+
+      - name: Build frontend
+        run: npm --prefix frontend run build
