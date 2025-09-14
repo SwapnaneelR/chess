@@ -18,28 +18,26 @@ const Home = () => {
           </h1>
 
           <p className="mt-4 text-lg md:text-xl text-white/50 leading-relaxed">
-            Play real-time chess with random opponents across the globe. 
-            Sharpen your strategy and become the champion!
+            Play real-time chess with random opponents across the globe. Sharpen
+            your strategy and become the champion!
           </p>
 
- 
           <div className="mt-8 flex flex-col sm:flex-row gap-4">
             <button
               onClick={() => navigate("/game")}
-              className="px-10 py-5 bg-emerald-700 hover:bg-emerald-800 text-white rounded-sm shadow-lg transition-transform transform hover:scale-105"
+              className="px-10 py-5 bg-emerald-700 hover:bg-emerald-800 text-white rounded-sm shadow-lg cursor-pointer transition-transform transform hover:scale-105"
             >
-               Join Game
+              Join Game
             </button>
 
             <button
               onClick={() => navigate("/about")}
-              className="px-10 py-3 bg-white/10 hover:bg-white/20 text-white rounded-sm shadow-lg backdrop-blur-md transition-transform transform hover:scale-105"
+              className="px-10 py-5 bg-zinc-700 hover:bg-zinc-800 text-white rounded-sm shadow-lg cursor-pointer transition-transform transform hover:scale-105"
             >
+              {" "}
               Learn Rules
             </button>
           </div>
-
-           
         </div>
       </div>
     </div>
