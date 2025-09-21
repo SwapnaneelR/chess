@@ -25,6 +25,7 @@ const Game = () => {
 
   const handleMove = (sourceSquare, targetSquare, piece = null) => {
     // Check if it's the player's turn
+    console.log(piece);
     const currentTurn = chess.turn();
     console.log("Current turn:", currentTurn === "w" ? "white" : "black");
 
