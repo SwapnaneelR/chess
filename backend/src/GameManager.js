@@ -1,3 +1,4 @@
+// GameManager.js
 import messages from "./message.js";
 import Game from "./Game.js";
 
@@ -40,7 +41,7 @@ class GameManager {
             if (message.type === messages.MOVE) {
                 const gameObject = this.Games.find(game => game.player1 === socket || game.player2 === socket);
                 if (gameObject) {
-                    gameObject.makeMove(socket, message.move);
+                    gameObject.makeMove(socket, message.payload.move);
                 }
             }
         })

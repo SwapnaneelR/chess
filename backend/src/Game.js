@@ -24,7 +24,9 @@ class Game {
         {
             const result = {
                 type: message.GAME_OVER,
-                winner: this.chess.turn() === 'w' ? 'black' : 'white'
+                payload: {
+                    winner: this.chess.turn() === 'w' ? 'black' : 'white'
+                }
             } 
             this.player1.send(JSON.stringify(result));
             this.player2.send(JSON.stringify(result));
@@ -34,13 +36,13 @@ class Game {
         if (socket === this.player1){
             this.player2.send(JSON.stringify({
                 type: message.MOVE,
-                move: move
+                payload: { move: move }
             }))
         }
         else {
             this.player1.send(JSON.stringify({
                 type: message.MOVE,
-                move: move
+                payload: { move: move }
             }))
         }
     }

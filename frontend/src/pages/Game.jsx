@@ -11,25 +11,68 @@ const messages = {
 
 const Game = () => {
   const [chess, setChess] = useState(new Chess());
-  const [playerColor, setPlayerColor] = useState();
+  const [playerColor, setPlayerColor] = useState(null);
   const socket = useSocket();
 
-  // handle piece drop
-  const onDrop = (sourceSquare, targetSquare) => {
-    const gameCopy = new Chess(chess.fen());
-    const piece = gameCopy.get(sourceSquare);
- 
-    if (!piece || piece.color !== playerColor[0]) {
+  const onPieceDrop = ({ piece, sourceSquare, targetSquare }) => {
+    console.log("=== MOVE ATTEMPT (options onPieceDrop) ===", {
+      piece,
+      sourceSquare,
+      targetSquare,
+    });
+    return handleMove(sourceSquare, targetSquare, piece);
+  };
+
+  const handleMove = (sourceSquare, targetSquare, piece = null) => {
+    // Check if it's the player's turn
+    const currentTurn = chess.turn();
+    console.log("Current turn:", currentTurn === "w" ? "white" : "black");
+
+    if (
+      playerColor &&
+      ((currentTurn === "w" && playerColor !== "white") ||
+        (currentTurn === "b" && playerColor !== "black"))
+    ) {
+      console.log("Not your turn!");
       return false;
     }
 
+    const gameCopy = new Chess(chess.fen());
     const move = {
       from: sourceSquare,
       to: targetSquare,
-      promotion: "q",
+      promotion: "q", // promote to queen always
     };
-    console.log("Attempting move:", move);
-     
+
+    try {
+      const result = gameCopy.move(move);
+      console.log("Move result:", result);
+
+      if (result) {
+        console.log("✅ Valid move, updating state");
+        setChess(gameCopy);
+
+        // Send move to server
+        if (socket && socket.readyState === WebSocket.OPEN) {
+          const message = {
+            type: messages.MOVE,
+            payload: { move },
+          };
+          console.log("Sending to server:", message);
+          socket.send(JSON.stringify(message));
+        } else {
+          console.log("Socket not ready");
+        }
+
+        return true;
+      } else {
+        console.log("Invalid move");
+        return false;
+      }
+    } catch (error) {
+      console.log("Move error:", error);
+      return false;
+    }
   };
 
   // listen for messages from server
@@ -43,15 +86,18 @@ const Game = () => {
         case messages.INIT_GAME:
           console.log("Game initialized", message.color);
           setChess(new Chess());
-          setPlayerColor(message.color); 
+          setPlayerColor(message.color);
           break;
 
         case messages.MOVE: {
           console.log("Move received", message.payload);
           const move = message.payload.move;
-          const gameCopy = new Chess(chess.fen());
-          gameCopy.move(move);
-          setChess(gameCopy);
+          // Apply opponent move
+          setChess((prev) => {
+            const gameCopy = new Chess(prev.fen());
+            gameCopy.move(move);
+            return gameCopy;
+          });
           break;
         }
 
@@ -66,29 +112,37 @@ const Game = () => {
   }, [socket, chess]);
 
   return (
-    <div className="flex flex-col items-center justify-center gap-4">
+    <div className="flex flex-row items-center justify-evenly gap-4">
       <div className="max-w-100 pt-20">
         <Chessboard
-          position={chess.fen()}
-          onPieceDrop={onDrop}
-          boardWidth={500}
-          orientation={playerColor} // ✅ board flips if black
-          customBoardStyle={{
-            borderRadius: "12px",
-            boxShadow: "0 4px 15px rgba(0,0,0,0.5)",
+          options={{
+            position: chess.fen(),
+            onPieceDrop,
+            boardOrientation: playerColor || "white",
+            boardStyle: {
+              borderRadius: "12px",
+              boxShadow: "0 4px 15px rgba(0,0,0,0.5)",
+              width: "500px",
+            },
           }}
         />
       </div>
-      <button
-        className="px-10 py-5 bg-emerald-700 hover:bg-emerald-800 text-white rounded-sm shadow-lg cursor-pointer transition-transform transform hover:scale-105"
-        onClick={() =>
-          socket.send(JSON.stringify({ type: messages.INIT_GAME }))
-        }
-      >
-        Start Game
-      </button>
-      <div>
-        Color : {playerColor ? playerColor : "Not assigned yet"}
+      <div className="flex flex-col gap-4 items-center justify-center">
+        {playerColor === null ? (
+          <button
+            className="px-10 py-5 bg-emerald-700 hover:bg-emerald-800 text-white rounded-sm shadow-lg cursor-pointer transition-transform transform hover:scale-105"
+            onClick={() =>
+              socket.send(JSON.stringify({ type: messages.INIT_GAME }))
+            }
+          >
+            Start Game
+          </button>
+        ) : (
+          <div className="px-10 py-5 bg-zinc-700 hover:bg-zinc-800 text-white rounded-sm shadow-lg   transition-transform transform hover:scale-105">
+             {chess.turn() == 'b' ? 'black' : 'white'}'s Turn
+          </div>
+        )}
+        <div className="px-10 py-5 bg-zinc-700 hover:bg-zinc-800 text-white rounded-sm shadow-lg   transition-transform transform hover:scale-105">Your color : {playerColor ? playerColor : "Not assigned yet"}</div>
       </div>
     </div>
   );
