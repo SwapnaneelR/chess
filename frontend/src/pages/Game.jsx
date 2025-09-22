@@ -113,8 +113,8 @@ const Game = () => {
   }, [socket, chess]);
 
   return (
-    <div className="flex flex-row items-center justify-evenly gap-4">
-      <div className="max-w-100 pt-20">
+    <div className="flex flex-row items-center h-screen bg-black/50 justify-evenly gap-4">
+      <div className="max-w-100 ">
         <Chessboard
           options={{
             position: chess.fen(),

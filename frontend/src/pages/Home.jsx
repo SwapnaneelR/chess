@@ -31,11 +31,11 @@ const Home = () => {
             </button>
 
             <button
-              onClick={() => navigate("/about")}
+              onClick={() => navigate("/login")}
               className="px-10 py-5 bg-zinc-700 hover:bg-zinc-800 text-white rounded-sm shadow-lg cursor-pointer transition-transform transform hover:scale-105"
             >
               {" "}
-              Learn Rules
+              Login
             </button>
           </div>
         </div>
