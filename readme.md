@@ -11,7 +11,7 @@
 -  ws (web socket)
 
 ### Todos : 
-- [ ]  add authentication
-- [ ] add database to store the user , game and moves
+- [x]  add authentication
+- [x] add database to store the user , game and moves
 - [ ] return a room id for users to rejoin if browser is closed
 - [ ] add a message queue before sending transaction to database 
