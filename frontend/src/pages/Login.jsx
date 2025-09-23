@@ -1,7 +1,9 @@
 import useAuth from "../hooks/useAuth";
 import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 const Login = () => {
-  const [isLoggedIn,  login] = useAuth();
+  const navigate = useNavigate();
+  const { isLoggedIn, login } = useAuth();
   useEffect(() => {
     console.log(isLoggedIn);
   }, [isLoggedIn]);
@@ -18,23 +20,27 @@ const Login = () => {
           }}
           className="flex flex-col mt-6 p-10 border border-2 font-medium"
         >
-          <input 
+          <input
             className="border border-2 m-3 font-2xl py-10 px-6"
             onChange={(e) => setUsername(e.target.value)}
             placeholder="Enter Username"
           ></input>
-          <input 
+          <input
             className="border border-2 m-3 font-2xl py-10 px-6"
             onChange={(e) => setPassword(e.target.value)}
             placeholder="Enter Password"
           ></input>
-          <button
-            className="border bg-zinc-800 border-2 m-5 font-2xl py-10 px-6"
-          >Submit</button>
+          <button className="border cursor-pointer bg-zinc-800 border-2 m-5 font-2xl py-10 px-6">
+            Submit
+          </button>
+          <div>
+            Do not have an account ? <span className="underline cursor-pointer"
+            onClick={()=>{navigate("/register")}}>Register</span>
+          </div>
         </form>
       </div>
       <div className="  w-1/2 h-screen overflow-y-hidden">
-          <img src="chess-bg.jpg" alt="chess" className="h-screen w-full"  />
+        <img src="chess-bg.jpg" alt="chess" className="h-screen w-full" />
       </div>
     </main>
   );

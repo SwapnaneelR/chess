@@ -1,8 +1,10 @@
 import useAuth from "../hooks/useAuth";
 import {  useState } from "react";
 import {toast} from "react-hot-toast"
-const Login = () => {
-  const [register] = useAuth();
+import { useNavigate } from "react-router-dom";
+const Register = () => {
+  const navigate = useNavigate();
+  const {register} = useAuth();
   const [username, setUsername] = useState(null);
   const [password, setPassword] = useState(null);
   const [confirmpassword, setConfirmPassword] = useState(null);
@@ -19,12 +21,13 @@ const Login = () => {
             if(password!=confirmpassword){
               toast.error("Passwords are not same")
             }
+            else
             register(username, password);
           }}
           className="flex flex-col mt-6 p-10 border border-2 font-medium"
         >
           <input 
-            className="border border-2 m-3 font-2xl py-10 px-6"
+            className="border border-2 m-3 font-2xl py-8 px-6"
             onChange={(e) => setUsername(e.target.value)}
             placeholder="Enter Username"
           ></input>
@@ -34,18 +37,22 @@ const Login = () => {
             placeholder="Enter Password"
           ></input>
           <input 
-            className="border border-2 m-3 font-2xl py-10 px-6"
+            className="border  border-2 m-3 font-2xl py-10 px-6"
             type="password"
             onChange={(e) => setConfirmPassword(e.target.value)}
             placeholder="Confirm Password"
           ></input>
           <button
-            className="border bg-zinc-800 border-2 m-5 font-2xl py-10 px-6"
+            className="border cursor-pointer bg-zinc-800 border-2 m-5 font-2xl py-10 px-6"
           >Submit</button>
+          <div>
+            Already have an account ? <span className="underline cursor-pointer"
+            onClick={()=>{navigate("/login")}}>Login</span>
+          </div>
         </form>
       </div>
     </main>
   );
 };
 
-export default Login;
+export default Register;
