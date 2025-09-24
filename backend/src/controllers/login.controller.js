@@ -20,7 +20,8 @@ async function loginController(req,res){
     res.cookie("token",token)
     // send back 200
     res.status(200).json({
-        message : "Login Successful"
+        message : "Login Successful",
+        user : user
     })
 }
 export default loginController

@@ -5,7 +5,7 @@ async function middleware(req,res,next) {
     const token = req.cookies.token
     if(!token){
         res.status(400).json({
-            message : "No token my bro!"
+            message : "Please Login my bro!"
         })
         return;
     }

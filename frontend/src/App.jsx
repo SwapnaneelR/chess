@@ -6,17 +6,20 @@ import About from "./pages/About.jsx";
 import Register from "./pages/Register.jsx";
 import Login from "./pages/Login.jsx";
 import { Toaster } from "react-hot-toast";
+import { AuthProvider } from "./context/AuthProvider";
 function App() {
   return (
     <>
       <Router>
-        <Routes>
-          <Route path="/" element={<Home />} />
-          <Route path="/game" element={<Game />} />
-          <Route path="/about" element={<About />} />
-          <Route path="/login" element={<Login />} />
-          <Route path="/register" element={<Register />} />
-        </Routes>
+        <AuthProvider>
+          <Routes>
+            <Route path="/" element={<Home />} />
+            <Route path="/game" element={<Game />} />
+            <Route path="/about" element={<About />} />
+            <Route path="/login" element={<Login />} />
+            <Route path="/register" element={<Register />} />
+          </Routes>
+        </AuthProvider>
       </Router>
       <Toaster>
     </Toaster>

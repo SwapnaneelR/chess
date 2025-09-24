@@ -12,6 +12,7 @@ const messages = {
 const Game = () => {
   const [chess, setChess] = useState(new Chess());
   const [playerColor, setPlayerColor] = useState(null);
+  const [startGame, setStartGame] = useState(false);
   const socket = useSocket();
 
   const onPieceDrop = ({ piece, sourceSquare, targetSquare }) => {
@@ -131,19 +132,23 @@ const Game = () => {
       <div className="flex flex-col gap-4 items-center justify-center">
         {playerColor === null ? (
           <button
-            className="px-10 py-5 bg-emerald-700 hover:bg-emerald-800 text-white rounded-sm shadow-lg cursor-pointer transition-transform transform hover:scale-105"
-            onClick={() =>
-              socket.send(JSON.stringify({ type: messages.INIT_GAME }))
-            }
+            className="px-10 py-5 font-medium text-2xl bg-emerald-700 hover:bg-emerald-800 text-white rounded-sm shadow-lg cursor-pointer transition-transform transform hover:scale-105"
+            onClick={() => {
+              if (startGame === false)
+                socket.send(JSON.stringify({ type: messages.INIT_GAME }));
+              setStartGame(true);
+            }}
           >
-            Start Game
+              START GAME 
           </button>
         ) : (
-          <div className="px-10 py-5 bg-zinc-700 hover:bg-zinc-800 text-white rounded-sm shadow-lg   transition-transform transform hover:scale-105">
-             {chess.turn() == 'b' ? 'black' : 'white'}'s Turn
+          <div className="px-10 font-medium text-xl py-5 bg-zinc-700 hover:bg-zinc-800 text-white rounded-sm shadow-lg   transition-transform transform hover:scale-105">
+            {chess.turn() == "b" ? "black" : "white"}'s Turn
           </div>
         )}
-        <div className="px-10 py-5 bg-zinc-700 hover:bg-zinc-800 text-white rounded-sm shadow-lg   transition-transform transform hover:scale-105">Your color : {playerColor ? playerColor : "Not assigned yet"}</div>
+        <div className="px-10 font-medium text-xl py-5 bg-slate-700 hover:bg-slate-800 text-white rounded-sm shadow-lg   transition-transform transform hover:scale-105">
+          Your color : {playerColor ? playerColor : "Not assigned yet"}
+        </div>
       </div>
     </div>
   );
