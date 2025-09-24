@@ -24,7 +24,7 @@ app.use(cookieParser())
 app.post("/api/login",loginController)
 app.post("/api/register",registerController)
 app.post('/api/logout', logoutController)
-app.get("/api/me",middleware,profileController)
+app.get("/api/me",profileController)
 app.get("/api/play" , middleware , (req,res)=>{
     res.status(200).json({
         message : "User logged in ! Connect to WS"
