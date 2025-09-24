@@ -1,7 +1,9 @@
 import jwt from "jsonwebtoken"
+import dotenv from 'dotenv';
+dotenv.config();
 import UserDB from "../db/user.model.js";
 
-const SECRET = "chess"
+const SECRET = process.env.JWT_SECRET || "chess"
 
 async function loginController(req,res){
     const {username,password} = req.body;

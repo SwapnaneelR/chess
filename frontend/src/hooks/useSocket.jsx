@@ -1,8 +1,8 @@
 import { useEffect, useState } from "react";
 import axios from "axios";
 import {toast} from "react-hot-toast"
-const BE_HTTP = "http://localhost:8080";
-const BE_WS = "ws://localhost:8080"; 
+const BE_HTTP = import.meta.env.VITE_BE_HTTP || "http://localhost:8080";
+const BE_WS = import.meta.env.VITE_BE_WS || "ws://localhost:8080"; 
 const useSocket = () => {
   const [socket, setSocket] = useState(null);
 

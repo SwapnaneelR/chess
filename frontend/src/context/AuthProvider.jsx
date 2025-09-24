@@ -3,7 +3,7 @@ import axios from "axios";
 import { toast } from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
 
-const BE_URL = "http://localhost:8080";
+const BE_URL = import.meta.env.VITE_BE_HTTP || "http://localhost:8080";
 
 import AuthContext from "./AuthContext";
 

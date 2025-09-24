@@ -1,9 +1,11 @@
 import mongoose from "mongoose";
+import dotenv from 'dotenv';
+dotenv.config();
 
-const uri =
-  "mongodb+srv://swapnaneel:Password%4026@cluster0.0k5ugfh.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0";
+const uri = process.env.MONGO_URI;
 
 async function connectDB() {
+  if(!uri) throw new Error('MONGO_URI is not defined in environment');
   await mongoose.connect(uri);
   console.log("DB connected")
 }

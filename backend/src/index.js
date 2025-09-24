@@ -9,7 +9,10 @@ import connectDB from "./db/db.connection.js";
 import cookieParser from "cookie-parser";
 import middleware from "./middlewares/auth.middleware.js";
 import profileController from "./controllers/profile.controller.js";
-const FE_URL = "http://localhost:5173"
+import dotenv from 'dotenv';
+dotenv.config();
+
+const FE_URL = process.env.FE_URL || "http://localhost:5173"
 const app = express();
 app.use(express.json())
     app.use(cors({
@@ -29,9 +32,11 @@ app.get("/api/play" , middleware , (req,res)=>{
 })
 
 // http server instance
-const httpServer = app.listen(8080,async ()=>{
+const PORT = process.env.PORT || 8080;
+
+const httpServer = app.listen(PORT,async ()=>{
     await connectDB()
-    console.log("Listening on http://localhost:8080")
+    console.log(`Listening on http://localhost:${PORT}`)
 });
 
 // websocket server 
