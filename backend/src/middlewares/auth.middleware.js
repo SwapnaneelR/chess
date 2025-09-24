@@ -1,22 +1,21 @@
 // a middleware to check user logged in , if not , game cant be played
 import jwt from "jsonwebtoken"
 const SECRET = "chess"
+
 async function middleware(req,res,next) {
-    const token = req.cookies.token
+    const token = req.cookies.token;
     if(!token){
-        res.status(400).json({
-            message : "Please Login my bro!"
-        })
-        return;
+        return res.status(401).json({ message: "Please login" });
     }
     try{
-        jwt.verify(token,SECRET);
+        const decoded = jwt.verify(token, SECRET);
+        // attach decoded payload for downstream handlers
+        req.user = decoded;
         next();
     }
-    catch{
-        res.status(400).json({
-            message : "invalid token"
-        })
-    }   
+    catch(err){
+        console.log(err);
+        return res.status(401).json({ message: "invalid or expired token" });
+    }
 }
 export default middleware

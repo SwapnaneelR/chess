@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { toast } from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
@@ -31,7 +31,6 @@ export const AuthProvider = ({ children }) => {
       toast.error(err.response?.data?.message || "login fail");
     }
   }
-
   async function register(username, password) {
     try {
       const response = await axios.post(
@@ -51,7 +50,37 @@ export const AuthProvider = ({ children }) => {
     }
   }
 
-  const value = { isLoggedIn, user, login, register };
+  async function logout() {
+    try {
+      // try to clear cookie on server if a logout route exists
+      await axios.post(`${BE_URL}/api/logout`, {}, { withCredentials: true }).catch(() => {});
+    } catch (err) {}
+    // clear local state and storage
+    setUser(null);
+    setIsLoggedIn(false);
+    localStorage.removeItem("chess_user");
+    navigate("/login");
+  }
+  async function getprofile(){
+    try{
+      const response = await axios.get(`${BE_URL}/api/me`, { withCredentials: true });
+      if(response && response.status === 200){
+        // backend returns { user }
+        setIsLoggedIn(true);
+        setUser(response.data.user);
+      } else {
+        setIsLoggedIn(false);
+        setUser(null);
+      }
+    }
+    catch(err){ 
+      // silently ignore/clear auth state on error
+      console.log("getprofile error:", err?.response?.data || err.message);
+      setIsLoggedIn(false);
+      setUser(null);
+    }
+  } 
+  const value = { isLoggedIn, user, login, register, logout ,getprofile};
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 };

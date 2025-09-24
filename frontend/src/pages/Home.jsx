@@ -3,9 +3,9 @@ import { useNavigate } from "react-router-dom";
 import { useEffect } from "react";
 const Home = () => {
   const navigate = useNavigate();
-  const {isLoggedIn,user} = useAuth() 
+  const {isLoggedIn,user,getprofile} = useAuth() 
   useEffect(() => {
-    console.log(isLoggedIn)
+    getprofile()
   }, [])
   
   return (

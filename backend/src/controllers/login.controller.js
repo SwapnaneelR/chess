@@ -17,7 +17,12 @@ async function loginController(req,res){
     // create a jwt token using name and password
     const token = jwt.sign({username,password},SECRET,{expiresIn : "1h"})
     // store the jwt in cookies 
-    res.cookie("token",token)
+    // set httpOnly cookie so browser stores it and sends on refresh
+    res.cookie("token", token, {
+        httpOnly: true,
+        maxAge: 60 * 60 * 1000, // 1 hour in ms to match token expiry
+        sameSite: 'lax'
+    })
     // send back 200
     res.status(200).json({
         message : "Login Successful",
