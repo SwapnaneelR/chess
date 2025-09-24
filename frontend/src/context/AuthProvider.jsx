@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import axios from "axios";
 import { toast } from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
@@ -25,7 +25,7 @@ export const AuthProvider = ({ children }) => {
         toast.success("Login Successful");
         navigate("/");
       } else {
-        toast.error("something went wrong");
+        toast.error("something went wrong!");
       }
     } catch (err) {
       toast.error(err.response?.data?.message || "login fail");
@@ -54,8 +54,9 @@ export const AuthProvider = ({ children }) => {
     try {
       // try to clear cookie on server if a logout route exists
       await axios.post(`${BE_URL}/api/logout`, {}, { withCredentials: true }).catch(() => {});
-    } catch (err) {}
-    // clear local state and storage
+    } catch (err) {
+      console.log(err)
+    } 
     setUser(null);
     setIsLoggedIn(false);
     localStorage.removeItem("chess_user");
