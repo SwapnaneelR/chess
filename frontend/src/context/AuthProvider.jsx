@@ -80,7 +80,14 @@ export const AuthProvider = ({ children }) => {
       setIsLoggedIn(false);
       setUser(null);
     }
-  } 
+  } const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    getprofile().finally(() => setLoading(false));
+  }, []);
+
+  if (loading) return <div>Loading...</div>;
+
   const value = { isLoggedIn, user, login, register, logout ,getprofile};
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

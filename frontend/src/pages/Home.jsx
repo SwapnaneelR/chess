@@ -3,11 +3,8 @@ import { useNavigate } from "react-router-dom";
 import { useEffect } from "react";
 const Home = () => {
   const navigate = useNavigate();
-  const {isLoggedIn,user,getprofile} = useAuth() 
-  useEffect(() => {
-    getprofile()
-  }, [])
-  
+  const {isLoggedIn,user} = useAuth() 
+ 
   return (
     <div
       className="min-h-screen bg-cover bg-center relative overflow-auto"
