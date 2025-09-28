@@ -1,5 +1,5 @@
 import jwt from "jsonwebtoken"
-const SECRET = "chess"
+const SECRET = process.env.JWT_SECRET || "chess"
 async function profileController(req,res) {
     const token = req.cookies.token
     if(!token){

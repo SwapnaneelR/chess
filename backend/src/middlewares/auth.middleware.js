@@ -1,7 +1,7 @@
 // a middleware to check user logged in , if not , game cant be played
-dotenv.config();
-import jwt from "jsonwebtoken"
 import dotenv from 'dotenv';
+import jwt from "jsonwebtoken"
+dotenv.config();
 const SECRET = process.env.JWT_SECRET || "chess"
 
 async function middleware(req,res,next) {

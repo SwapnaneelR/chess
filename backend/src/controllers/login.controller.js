@@ -20,10 +20,13 @@ async function loginController(req,res){
     const token = jwt.sign({username,password},SECRET,{expiresIn : "1h"})
     // store the jwt in cookies 
     // set httpOnly cookie so browser stores it and sends on refresh
+    const isProd = process.env.NODE_ENV === "production";
     res.cookie("token", token, {
         httpOnly: true,
-        maxAge: 60 * 60 * 1000, // 1 hour in ms to match token expiry
-        sameSite: 'None'
+        secure: isProd,
+        sameSite: isProd ? 'None' : 'Lax',
+        path: '/',
+        maxAge: 1000 * 60 * 60 // 1 hour
     })
     // send back 200
     res.status(200).json({
