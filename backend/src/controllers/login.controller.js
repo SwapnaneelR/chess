@@ -23,7 +23,7 @@ async function loginController(req,res){
     res.cookie("token", token, {
         httpOnly: true,
         maxAge: 60 * 60 * 1000, // 1 hour in ms to match token expiry
-        sameSite: 'lax'
+        sameSite: 'None'
     })
     // send back 200
     res.status(200).json({
