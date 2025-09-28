@@ -3,7 +3,9 @@ import axios from "axios";
 import { toast } from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
 
-const BE_URL = import.meta.env.VITE_BE_HTTP || "http://localhost:8080";
+const BE_URL = import.meta.env.VITE_BE_HTTP 
+||
+ "http://localhost:8080";
 
 import AuthContext from "./AuthContext";
 
@@ -14,7 +16,7 @@ export const AuthProvider = ({ children }) => {
     try {
       const raw = localStorage.getItem("chess_user");
       return raw ? JSON.parse(raw) : null;
-    } catch (e) {
+    } catch  {
       return null;
     }
   });
@@ -31,7 +33,7 @@ export const AuthProvider = ({ children }) => {
         setUser(response.data.user);
         setIsLoggedIn(true);
         // persist minimal user info so UI stays logged-in across reloads
-        try { localStorage.setItem("chess_user", JSON.stringify(response.data.user)); } catch(e){}
+        try { localStorage.setItem("chess_user", JSON.stringify(response.data.user)); } catch(e){console.log(e)}
         toast.success("Login Successful");
         navigate("/");
       } else {
@@ -50,7 +52,7 @@ export const AuthProvider = ({ children }) => {
       );
       if (response.status === 200) {
         setUser(response.data.user);
-        try { localStorage.setItem("chess_user", JSON.stringify(response.data.user)); } catch(e){}
+        try { localStorage.setItem("chess_user", JSON.stringify(response.data.user)); } catch(e){console.log(e)}
         navigate("/login");
         toast.success("Registration Successful");
         return;
@@ -80,7 +82,7 @@ export const AuthProvider = ({ children }) => {
         // backend returns { user }
         setIsLoggedIn(true);
         setUser(response.data.user);
-        try { localStorage.setItem("chess_user", JSON.stringify(response.data.user)); } catch(e){}
+        try { localStorage.setItem("chess_user", JSON.stringify(response.data.user)); } catch(e){console.log(e)}
       } else {
         setIsLoggedIn(false);
         setUser(null);

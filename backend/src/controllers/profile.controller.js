@@ -1,9 +1,11 @@
 import jwt from "jsonwebtoken"
+import dotenv from 'dotenv';
+dotenv.config();
 const SECRET = process.env.JWT_SECRET || "chess"
 async function profileController(req,res) {
     const token = req.cookies.token
     if(!token){
-        res.status(400).json({
+        return res.status(400).json({
             message : "not logged in"
         })
     }

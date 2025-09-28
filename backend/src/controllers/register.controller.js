@@ -13,12 +13,12 @@ async function registerController(req,res){
     try{ 
         const newUser = new UserDB({username,password})
         await newUser.save() 
-        res.status(200).json({
+        return res.status(200).json({
             message : "Registration Successful"
         })
     }
     catch {
-        res.status(400).send("registration fail")
+        return res.status(400).send("registration fail")
     }
 }
 export default registerController
