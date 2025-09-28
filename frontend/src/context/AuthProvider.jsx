@@ -9,8 +9,16 @@ import AuthContext from "./AuthContext";
 
 export const AuthProvider = ({ children }) => {
   const navigate = useNavigate();
-  const [user, setUser] = useState(null);
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  // initialize from localStorage to keep UI logged-in across reloads
+  const [user, setUser] = useState(() => {
+    try {
+      const raw = localStorage.getItem("chess_user");
+      return raw ? JSON.parse(raw) : null;
+    } catch (e) {
+      return null;
+    }
+  });
+  const [isLoggedIn, setIsLoggedIn] = useState(() => !!localStorage.getItem("chess_user"));
 
   async function login(username, password) {
     try {
@@ -22,6 +30,8 @@ export const AuthProvider = ({ children }) => {
       if (response.status === 200) {
         setUser(response.data.user);
         setIsLoggedIn(true);
+        // persist minimal user info so UI stays logged-in across reloads
+        try { localStorage.setItem("chess_user", JSON.stringify(response.data.user)); } catch(e){}
         toast.success("Login Successful");
         navigate("/");
       } else {
@@ -40,6 +50,7 @@ export const AuthProvider = ({ children }) => {
       );
       if (response.status === 200) {
         setUser(response.data.user);
+        try { localStorage.setItem("chess_user", JSON.stringify(response.data.user)); } catch(e){}
         navigate("/login");
         toast.success("Registration Successful");
         return;
@@ -69,9 +80,11 @@ export const AuthProvider = ({ children }) => {
         // backend returns { user }
         setIsLoggedIn(true);
         setUser(response.data.user);
+        try { localStorage.setItem("chess_user", JSON.stringify(response.data.user)); } catch(e){}
       } else {
         setIsLoggedIn(false);
         setUser(null);
+        localStorage.removeItem("chess_user");
       }
     }
     catch(err){ 
@@ -79,6 +92,7 @@ export const AuthProvider = ({ children }) => {
       console.log("getprofile error:", err?.response?.data || err.message);
       setIsLoggedIn(false);
       setUser(null);
+      localStorage.removeItem("chess_user");
     }
   } const [loading, setLoading] = useState(true);
 
