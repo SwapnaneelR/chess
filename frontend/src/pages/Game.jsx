@@ -103,7 +103,7 @@ const Game = () => {
       {/* Left Side - Players */}
       <div className="flex flex-col gap-6 text-white">
         <div className="font-bold text-4xl tracking-wide">Players</div>
-        {players.length > 0 ? (
+        {players?.length > 0 ? (
           <div className="bg-zinc-900/70 border border-blue-500 rounded-sm shadow-md px-6 py-4 backdrop-blur-md">
             {players[0] && (
               <div className="text-xl mb-2">
