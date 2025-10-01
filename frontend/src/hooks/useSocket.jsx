@@ -10,8 +10,8 @@ const useSocket = () => {
     const initSocket = async () => {
       try {
         // hit /api/play to check if the user is allowed
-        await axios.get(`${BE_HTTP}/api/play`, { withCredentials: true });
-
+        const res = await axios.get(`${BE_HTTP}/api/play`, { withCredentials: true });
+        console.log(res.data.user);
         // If allowed, connect WebSocket
         const ws = new WebSocket(BE_WS); 
         ws.onopen = () => setSocket(ws);

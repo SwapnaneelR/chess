@@ -27,6 +27,7 @@ app.post('/api/logout', logoutController)
 app.get("/api/me",profileController)
 app.get("/api/play" , middleware , (req,res)=>{
     res.status(200).json({
+        user : req?.user ,
         message : "User logged in ! Connect to WS"
     })
 })

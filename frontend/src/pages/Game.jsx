@@ -2,6 +2,9 @@ import React, { useState, useEffect } from "react";
 import useSocket from "../hooks/useSocket.jsx";
 import { Chess } from "chess.js";
 import { Chessboard } from "react-chessboard";
+import useAuth from "../hooks/useAuth.jsx";
+import toast from "react-hot-toast";
+import HomeButton from "../components/HomeButton.jsx";
 
 const messages = {
   INIT_GAME: "init_game",
@@ -13,29 +16,24 @@ const Game = () => {
   const [chess, setChess] = useState(new Chess());
   const [playerColor, setPlayerColor] = useState(null);
   const [startGame, setStartGame] = useState(false);
+  const [players, setPlayers] = useState([]);
+  const [result, setResult] = useState(null);
   const socket = useSocket();
+  const { user } = useAuth();
 
-  const onPieceDrop = ({ piece, sourceSquare, targetSquare }) => {
-    console.log("=== MOVE ATTEMPT (options onPieceDrop) ===", {
-      piece,
-      sourceSquare,
-      targetSquare,
-    });
-    return handleMove(sourceSquare, targetSquare, piece);
+  const onPieceDrop = ({  sourceSquare, targetSquare }) => {
+    return handleMove(sourceSquare, targetSquare);
   };
 
-  const handleMove = (sourceSquare, targetSquare, piece = null) => {
-    // Check if it's the player's turn
-    console.log(piece);
+  const handleMove = (sourceSquare, targetSquare) => {
     const currentTurn = chess.turn();
-    console.log("Current turn:", currentTurn === "w" ? "white" : "black");
-
+  
     if (
       playerColor &&
       ((currentTurn === "w" && playerColor !== "white") ||
         (currentTurn === "b" && playerColor !== "black"))
     ) {
-      console.log("Not your turn!");
+      toast.error("⏳ Not your turn!");
       return false;
     }
 
@@ -43,41 +41,29 @@ const Game = () => {
     const move = {
       from: sourceSquare,
       to: targetSquare,
-      promotion: "q", // promote to queen always
+      promotion: "q", // always promote to queen
     };
 
     try {
       const result = gameCopy.move(move);
-      console.log("Move result:", result);
-
       if (result) {
-        console.log("✅ Valid move, updating state");
         setChess(gameCopy);
 
-        // Send move to server
         if (socket && socket.readyState === WebSocket.OPEN) {
-          const message = {
-            type: messages.MOVE,
-            payload: { move },
-          };
-          console.log("Sending to server:", message);
-          socket.send(JSON.stringify(message));
-        } else {
-          console.log("Socket not ready");
+          socket.send(
+            JSON.stringify({ type: messages.MOVE, payload: { move } })
+          );
         }
-
         return true;
-      } else {
-        console.log("Invalid move");
-        return false;
       }
+      return false;
     } catch (error) {
-      console.log("Move error:", error);
+      console.error("Move error:", error);
       return false;
     }
   };
 
-  // listen for messages from server
+  // Listen for messages from server
   useEffect(() => {
     if (!socket) return;
 
@@ -86,15 +72,13 @@ const Game = () => {
 
       switch (message.type) {
         case messages.INIT_GAME:
-          console.log("Game initialized", message.color);
           setChess(new Chess());
           setPlayerColor(message.color);
+          setPlayers(message.players);
           break;
 
         case messages.MOVE: {
-          console.log("Move received", message.payload);
           const move = message.payload.move;
-          // Apply opponent move
           setChess((prev) => {
             const gameCopy = new Chess(prev.fen());
             gameCopy.move(move);
@@ -104,7 +88,7 @@ const Game = () => {
         }
 
         case messages.GAME_OVER:
-          console.log("Game over", message.payload);
+          setResult(message.payload.winner); 
           break;
 
         default:
@@ -114,40 +98,80 @@ const Game = () => {
   }, [socket, chess]);
 
   return (
-    <div className="flex flex-row items-center h-screen bg-black/50 justify-evenly gap-4">
-      <div className="max-w-100 ">
+    <div className="flex flex-row items-center h-screen w-full bg-gradient-to-br from-zinc-950 via-zinc-900 to-black justify-evenly p-6">
+      <HomeButton/>
+      {/* Left Side - Players */}
+      <div className="flex flex-col gap-6 text-white">
+        <div className="font-bold text-4xl tracking-wide">Players</div>
+        {players.length > 0 ? (
+          <div className="bg-zinc-900/70 border border-blue-500 rounded-sm shadow-md px-6 py-4 backdrop-blur-md">
+            {players[0] && (
+              <div className="text-xl mb-2">
+                {players[0]} <span className="text-gray-400">(White)</span>
+              </div>
+            )}
+            <div className="text-center text-sm uppercase text-gray-400 my-2">
+              VS
+            </div>
+            {players[1] && (
+              <div className="text-xl">
+                {players[1]} <span className="text-gray-400">(Black)</span>
+              </div>
+            )}
+          </div>
+        ) : (
+          <div className="text-gray-400 italic">
+            Waiting for another player to join...
+          </div>
+        )}
+      </div>
+
+      {/* Middle - Chessboard */}
+      <div className="flex justify-center items-center bg-zinc-900/40 rounded-sm p-4 shadow-xl backdrop-blur-lg">
         <Chessboard
           options={{
             position: chess.fen(),
             onPieceDrop,
             boardOrientation: playerColor || "white",
-            boardStyle: {
-              borderRadius: "12px",
-              boxShadow: "0 4px 15px rgba(0,0,0,0.5)",
-              width: "500px",
-            },
+            boardStyle: { border: "3px solid white", width: "500px" },
           }}
         />
       </div>
-      <div className="flex flex-col gap-4 items-center justify-center">
+
+      {/* Right Side - Controls */}
+      <div className="flex flex-col gap-6 items-center text-white">
         {playerColor === null ? (
           <button
-            className="px-10 py-5 font-medium text-2xl bg-emerald-700 hover:bg-emerald-800 text-white rounded-sm shadow-lg cursor-pointer transition-transform transform hover:scale-105"
+            className="px-10 py-8 text-2xl font-medium cursor-pointer   border border-3 border-emerald-900 rounded-sm shadow-md transform hover:scale-105 hover: transition duration-300 ease-in-out"
             onClick={() => {
-              if (startGame === false)
-                socket.send(JSON.stringify({ type: messages.INIT_GAME }));
-              setStartGame(true);
+              if (!startGame) {
+                socket.send(
+                  JSON.stringify({
+                    type: messages.INIT_GAME,
+                    payload: { id: user.id },
+                  })
+                );
+                setStartGame(true);
+              }
             }}
           >
-              START GAME 
+            START GAME 🚀
           </button>
+        ) : result ? (
+          <div className="px-8 py-4 text-xl font-bold bg-zinc-900/70 border border-blue-500 rounded-sm shadow-md backdrop-blur-md">
+            {result === "draw" ? "🤝 It's a Draw!" : `🎉 ${result} wins!`}
+          </div>
         ) : (
-          <div className="px-10 font-medium text-xl py-5 bg-zinc-700 hover:bg-zinc-800 text-white rounded-sm shadow-lg   transition-transform transform hover:scale-105">
-            {chess.turn() == "b" ? "black" : "white"}'s Turn
+          <div className="px-8 py-4 text-lg italic bg-zinc-800/70 rounded-sm shadow-md">
+            Turn: {chess.turn() === "b" ? "Black" : "White"}
           </div>
         )}
-        <div className="px-10 font-medium text-xl py-5 bg-slate-700 hover:bg-slate-800 text-white rounded-sm shadow-lg   transition-transform transform hover:scale-105">
-          Your color : {playerColor ? playerColor : "Not assigned yet"}
+
+        <div className="px-8 py-4 text-lg bg-zinc-900/70 border border-zinc-600 rounded-sm shadow-md backdrop-blur-md">
+          Your Color:{" "}
+          <span className="font-semibold capitalize">
+            {playerColor || "Not assigned yet"}
+          </span>
         </div>
       </div>
     </div>

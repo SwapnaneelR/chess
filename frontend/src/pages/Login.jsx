@@ -1,6 +1,7 @@
 import useAuth from "../hooks/useAuth";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import HomeButton from "../components/HomeButton";
 const Login = () => {
   const navigate = useNavigate();
   const { isLoggedIn, login } = useAuth();
@@ -11,7 +12,8 @@ const Login = () => {
   const [password, setPassword] = useState(null);
   return (
     <main className="flex flex-row h-screen bg-black/50">
-      <div className=" flex flex-col items-center justify-center w-1/2 h-screen">
+      <div className=" flex flex-col items-center  bg-gradient-to-br from-zinc-950 via-zinc-900 to-black justify-evenly p-6 justify-center w-1/2 h-screen">
+        <HomeButton></HomeButton>
         <h1 className="text-7xl font-semibold ">Login</h1>
         <form
           onSubmit={(e) => {

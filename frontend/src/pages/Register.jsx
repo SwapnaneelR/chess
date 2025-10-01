@@ -2,6 +2,7 @@ import useAuth from "../hooks/useAuth";
 import {  useState } from "react";
 import {toast} from "react-hot-toast"
 import { useNavigate } from "react-router-dom";
+import HomeButton from "../components/HomeButton";
 const Register = () => {
   const navigate = useNavigate();
   const {register} = useAuth();
@@ -13,7 +14,8 @@ const Register = () => {
       <div className="  w-1/2 h-screen overflow-y-hidden">
           <img src="register.jpg" alt="chess" className="h-screen w-full"  />
       </div>
-      <div className=" flex flex-col items-center justify-center w-1/2 h-screen">
+      <div className=" flex flex-col bg-gradient-to-br from-zinc-950 via-zinc-900 to-black justify-evenly p-6 items-center justify-center w-1/2 h-screen">
+        <HomeButton/>
         <h1 className="text-7xl font-semibold ">Register</h1>
         <form
           onSubmit={(e) => {
