@@ -7,6 +7,7 @@ import Register from "./pages/Register.jsx";
 import Login from "./pages/Login.jsx";
 import { Toaster } from "react-hot-toast";
 import { AuthProvider } from "./context/AuthProvider";
+import Profile from "./pages/Profile.jsx";
 function App() {
   return (
     <>
@@ -17,6 +18,7 @@ function App() {
             <Route path="/game" element={<Game />} />
             <Route path="/about" element={<About />} />
             <Route path="/login" element={<Login />} />
+            <Route path="/profile" element={<Profile />} />
             <Route path="/register" element={<Register />} />
           </Routes>
         </AuthProvider>
