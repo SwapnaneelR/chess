@@ -5,7 +5,7 @@ import Game from "./Game.js";
 class GameManager {
   Games;
   pendingPlayers = null;
-  pendingPlayerID = null;
+  pendingPlayerName = null;
   
   constructor() {
     this.Games = [];
@@ -35,7 +35,7 @@ class GameManager {
         console.log("Received message: %s", data);
         const message = JSON.parse(data);
         const payload = message.payload;
-        const ID = payload.id;
+        const username = payload.username;
 
         // INIT_GAME event
         // If there is a pending player, create a new game with pending player and this player(socket)
@@ -46,9 +46,9 @@ class GameManager {
               // Use the async Game.create() factory method
               const newGame = await Game.create(
                 this.pendingPlayers,
-                this.pendingPlayerID,
+                this.pendingPlayerName,
                 socket,
-                ID
+                username
               );
               // push to the Game [] and check number of ongoing games
               this.Games.push(newGame);
@@ -56,7 +56,7 @@ class GameManager {
               
               // Clear pending player after successful game creation
               this.pendingPlayers = null;
-              this.pendingPlayerID = null;
+              this.pendingPlayerName = null;
             } catch (error) {
               console.error("Failed to create game:", error);
               
@@ -75,11 +75,11 @@ class GameManager {
               
               // Reset pending player
               this.pendingPlayers = null;
-              this.pendingPlayerID = null;
+              this.pendingPlayerName = null;
             }
           } else {
             this.pendingPlayers = socket;
-            this.pendingPlayerID = ID;
+            this.pendingPlayerName = username;
             console.log("Player added to pending queue");
           }
         }

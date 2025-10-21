@@ -8,20 +8,6 @@ class Game {
     chess;
     players = [];
 
-    async findusername(id) {
-        try {
-            const user = await UserDB.findOne({ _id: id });
-            if (!user) {
-                console.warn(`User not found for id ${id}`);
-                return `Unknown-${id}`;
-            }
-            console.log(user.username);
-            return user.username;
-        } catch (error) {
-            console.error(`Error finding username for id ${id}:`, error);
-            return `Unknown-${id}`;
-        }
-    }
 
     // Private constructor - use Game.create() instead
     constructor(socket1, socket2, username1, username2) {
@@ -33,15 +19,13 @@ class Game {
     }
 
     // Factory method to create and initialize a game
-    static async create(socket1, id1, socket2, id2) {
+    static async create(socket1, username1, socket2, username2) {
+        console.log(">>> Usernames passed to Game.create():", { username1, username2 });
         const tempGame = new Game(socket1, socket2, null, null);
         
         try {
             // Fetch usernames
-            const [username1, username2] = await Promise.all([
-                tempGame.findusername(id1), 
-                tempGame.findusername(id2)
-            ]);
+    
 
             // Create the actual game instance with usernames
             const game = new Game(socket1, socket2, username1, username2);

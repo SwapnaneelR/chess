@@ -148,7 +148,7 @@ const Game = () => {
                 socket.send(
                   JSON.stringify({
                     type: messages.INIT_GAME,
-                    payload: { id: user.id },
+                    payload: { username: user.username },
                   })
                 );
                 setStartGame(true);
