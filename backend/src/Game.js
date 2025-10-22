@@ -1,4 +1,4 @@
-import UserDB from "./db/user.model.js";
+ 
 import message from "./message.js";
 import { Chess } from 'chess.js'; 
 
@@ -21,7 +21,6 @@ class Game {
     // Factory method to create and initialize a game
     static async create(socket1, username1, socket2, username2) {
         console.log(">>> Usernames passed to Game.create():", { username1, username2 });
-        const tempGame = new Game(socket1, socket2, null, null);
         
         try {
             // Fetch usernames

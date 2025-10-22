@@ -20,14 +20,15 @@ const Game = () => {
   const [result, setResult] = useState(null);
   const socket = useSocket();
   const { user } = useAuth();
+  const [movesTable, setMovesTable] = useState([]);
 
-  const onPieceDrop = ({  sourceSquare, targetSquare }) => {
+  const onPieceDrop = ({ sourceSquare, targetSquare }) => {
     return handleMove(sourceSquare, targetSquare);
   };
 
   const handleMove = (sourceSquare, targetSquare) => {
     const currentTurn = chess.turn();
-  
+
     if (
       playerColor &&
       ((currentTurn === "w" && playerColor !== "white") ||
@@ -47,6 +48,7 @@ const Game = () => {
     try {
       const result = gameCopy.move(move);
       if (result) {
+        setMovesTable((prev) => [...prev, move]);
         setChess(gameCopy);
 
         if (socket && socket.readyState === WebSocket.OPEN) {
@@ -84,11 +86,12 @@ const Game = () => {
             gameCopy.move(move);
             return gameCopy;
           });
+          setMovesTable((prev) => [...prev, move]);
           break;
         }
 
         case messages.GAME_OVER:
-          setResult(message.payload.winner); 
+          setResult(message.payload.winner);
           break;
 
         default:
@@ -99,7 +102,7 @@ const Game = () => {
 
   return (
     <div className="flex flex-row items-center h-screen w-full bg-gradient-to-br from-zinc-950 via-zinc-900 to-black justify-evenly p-6">
-      <HomeButton/>
+      <HomeButton />
       {/* Left Side - Players */}
       <div className="flex flex-col gap-6 text-white">
         <div className="font-bold text-4xl tracking-wide">Players</div>
@@ -125,7 +128,23 @@ const Game = () => {
           </div>
         )}
       </div>
-
+      {/* Right Side - Moves */}
+      <div className="flex flex-col gap-2 text-white absolute top-6 left-1/2 transform -translate-x-1/2">
+        <div className="font-bold text-4xl tracking-wide">Moves</div>
+        <div className="bg-zinc-900/70 border border-blue-500 rounded-sm shadow-md px-6 py-4 max-h-64 overflow-y-auto backdrop-blur-md">
+          {movesTable.length > 0 ? (
+            <ol className="list-decimal list-inside">
+              {movesTable.map((move, index) => (
+                <li key={index} className="mb-1">
+                  {move.from} to {move.to}
+                </li>
+              ))}
+            </ol>
+          ) : (
+            <div className="text-gray-400 italic">No moves made yet.</div>
+          )}
+        </div>
+      </div>
       {/* Middle - Chessboard */}
       <div className="flex justify-center items-center bg-zinc-900/40 rounded-sm p-4 shadow-xl backdrop-blur-lg">
         <Chessboard
