@@ -63,7 +63,21 @@ class Game {
             console.error("Invalid move:", error);
             return;
         }
+        const moveMessage = {
+            type: message.MOVE,
+            payload: { move: move }
+        };
 
+        if (socket === this.player1) {
+            if (this.player2.readyState === this.player2.OPEN) {
+                this.player2.send(JSON.stringify(moveMessage));
+            }
+        } else {
+            if (this.player1.readyState === this.player1.OPEN) {
+                this.player1.send(JSON.stringify(moveMessage));
+            }
+        }
+    
         // Check if the game is over
         if (this.chess.isGameOver()) {
             const result = {
@@ -82,21 +96,7 @@ class Game {
             return;
         }
 
-        // Send the move to the opponent
-        const moveMessage = {
-            type: message.MOVE,
-            payload: { move: move }
-        };
-
-        if (socket === this.player1) {
-            if (this.player2.readyState === this.player2.OPEN) {
-                this.player2.send(JSON.stringify(moveMessage));
-            }
-        } else {
-            if (this.player1.readyState === this.player1.OPEN) {
-                this.player1.send(JSON.stringify(moveMessage));
-            }
-        }
+         
     }
 }
 

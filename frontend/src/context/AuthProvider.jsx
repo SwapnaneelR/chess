@@ -8,6 +8,7 @@ const BE_URL = import.meta.env.VITE_BE_HTTP
  "http://localhost:8080";
 
 import AuthContext from "./AuthContext";
+import Loader from "../components/Loader";
 
 export const AuthProvider = ({ children }) => {
   const navigate = useNavigate();
@@ -89,7 +90,7 @@ export const AuthProvider = ({ children }) => {
     getprofile().finally(() => setLoading(false));
   }, []);
 
-  if (loading) return <div>Loading...</div>;
+  if (loading) return <Loader />;
 
   const value = { isLoggedIn, user, login, register, logout ,getprofile};
 

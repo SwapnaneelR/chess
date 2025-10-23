@@ -103,48 +103,68 @@ const Game = () => {
   return (
     <div className="flex flex-row items-center h-screen w-full bg-gradient-to-br from-zinc-950 via-zinc-900 to-black justify-evenly p-6">
       <HomeButton />
-      {/* Left Side - Players */}
-      <div className="flex flex-col gap-6 text-white">
-        <div className="font-bold text-4xl tracking-wide">Players</div>
+      {/* left Side - Moves */}
+      <div className="bg-zinc-900/60 border border-blue-500/50 rounded-md shadow-lg px-6 py-4 max-h-120 overflow-y-auto backdrop-blur-md">
+        {movesTable.length > 0 ? (
+          <ol className="space-y-2">
+            {movesTable.map((move, index) => (
+              <li
+                key={index}
+                className={`flex items-center justify-between px-3 py-1 rounded-md text-sm
+                ${index % 2 === 0 ? "bg-white/10" : "bg-blue-500/10"}`}
+              >
+                <span className="font-medium">
+                  {index % 2 === 0 ? "⚪ White " : "⚫ Black"}
+                </span>
+                <span className="text-gray-300">
+                  {move.from} → {move.to}
+                </span>
+              </li>
+            ))}
+          </ol>
+        ) : (
+          <div className="text-gray-400 italic">No moves made yet.</div>
+        )}
+      </div>
+
+      {/* top  - Players */}
+      <div className="flex flex-row gap-6 absolute top-6 left-1/2 transform -translate-x-1/2">
         {players?.length > 0 ? (
-          <div className="bg-zinc-900/70 border border-blue-500 rounded-sm shadow-md px-6 py-4 backdrop-blur-md">
+          <div className="bg-zinc-900/60 border border-zinc-700/50 backdrop-blur-md px-6 py-4 rounded-md shadow-md flex items-center gap-6">
+            {/* White Player */}
             {players[0] && (
-              <div className="text-xl mb-2">
-                {players[0]} <span className="text-gray-400">(White)</span>
+              <div className="flex items-center gap-2">
+                <div className="w-3 h-3 rounded-full bg-white"></div>
+                <span className="text-lg font-medium text-white">
+                  {players[0]}
+                </span>
+                <span className="text-gray-400 text-sm">(White)</span>
               </div>
             )}
-            <div className="text-center text-sm uppercase text-gray-400 my-2">
+
+            {/* VS Divider */}
+            <div className="text-center text-sm font-semibold tracking-widest text-gray-400">
               VS
             </div>
+
+            {/* Black Player */}
             {players[1] && (
-              <div className="text-xl">
-                {players[1]} <span className="text-gray-400">(Black)</span>
+              <div className="flex items-center gap-2">
+                <div className="w-3 h-3 rounded-full bg-black border border-white/20"></div>
+                <span className="text-lg font-medium text-white">
+                  {players[1]}
+                </span>
+                <span className="text-gray-400 text-sm">(Black)</span>
               </div>
             )}
           </div>
         ) : (
-          <div className="text-gray-400 italic">
+          <div className="bg-zinc-900/50 backdrop-blur-md px-6  mt-8 py-4 rounded-md shadow-md text-gray-400 italic">
             Waiting for another player to join...
           </div>
         )}
       </div>
-      {/* Right Side - Moves */}
-      <div className="flex flex-col gap-2 text-white absolute top-6 left-1/2 transform -translate-x-1/2">
-        <div className="font-bold text-4xl tracking-wide">Moves</div>
-        <div className="bg-zinc-900/70 border border-blue-500 rounded-sm shadow-md px-6 py-4 max-h-64 overflow-y-auto backdrop-blur-md">
-          {movesTable.length > 0 ? (
-            <ol className="list-decimal list-inside">
-              {movesTable.map((move, index) => (
-                <li key={index} className="mb-1">
-                  {move.from} to {move.to}
-                </li>
-              ))}
-            </ol>
-          ) : (
-            <div className="text-gray-400 italic">No moves made yet.</div>
-          )}
-        </div>
-      </div>
+
       {/* Middle - Chessboard */}
       <div className="flex justify-center items-center bg-zinc-900/40 rounded-sm p-4 shadow-xl backdrop-blur-lg">
         <Chessboard
